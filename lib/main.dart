@@ -15,10 +15,86 @@ _HomeState createState() => _HomeState();
 class _HomeState extends State<Home> {
 
     List _todoList = [];
+    TextEditingController  controladorDeTodo = TextEditingController ();
+
+    void _addToDo(){
+      setState(() {
+              Map<String,dynamic> newTodo = Map();
+              newTodo["title"] = this.controladorDeTodo.text;
+              newTodo["ok"]  = false;
+              this.controladorDeTodo.text = "";
+              this._todoList.add(newTodo);
+      });
+    }
 
     @override
     Widget build(BuildContext context) {
-      return Container(color: Colors.white,);
+      return Scaffold(
+        appBar:AppBar(
+              title: Text("Lista de tarefas"),
+              centerTitle: true,
+              ),
+        body: Column(
+                children: <Widget>[
+                      
+                              Container(padding: EdgeInsets.fromLTRB(17, 1, 7, 1),
+                                      child: Row(children: <Widget>[
+                                        
+                                        Expanded(child: TextField(
+                                          decoration: InputDecoration(labelText: "nova tarefa",
+                                                                              labelStyle: TextStyle(color: Colors.blueAccent)
+                                                                      ),
+                                          controller: this.controladorDeTodo,
+                                                )
+                                                ),
+                                        RaisedButton(onPressed:_addToDo
+                                                    ,child: Text("ADD"),
+                                                    color: Colors.blueAccent,
+                                                    textColor: Colors.white
+                                                    )
+                                      ],
+                                      ),
+                              ),
+
+
+          Expanded(child: ListView.builder(
+              padding: EdgeInsets.only(top:10.0),
+              itemCount: this._todoList.length,
+              itemBuilder: (context,index){
+                  return CheckboxListTile(
+                  title: Text( this._todoList[index]["title"]),
+                    value: this._todoList[index]["ok"],
+                    secondary: CircleAvatar( 
+                        child: Icon(
+                          _todoList[index]["ok"]? Icons.check:Icons.error
+                        ),
+
+
+                    ),
+
+                    onChanged: (valor){
+
+                      setState(() {
+                        this._todoList[index]["ok"]  =valor; 
+                      });
+
+
+                    },
+                  );
+
+
+              },
+
+
+
+          ),)
+
+
+
+        ],),
+
+      
+      );
       }
 
 
