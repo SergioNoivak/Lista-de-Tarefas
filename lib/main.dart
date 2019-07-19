@@ -79,10 +79,15 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: RefreshIndicator(child: ListView.builder(
               padding: EdgeInsets.only(top: 10.0),
               itemCount: this._todoList.length,
               itemBuilder: buildItem,
+              
+            
+            ),
+            
+            onRefresh:ordenar,
             ),
           )
         ],
@@ -110,9 +115,7 @@ class _HomeState extends State<Home> {
                 action: SnackBarAction(
                     label:"Desfazer",
                     onPressed: (){
-
                       setState(() {
-                        
                       this._todoList.insert(lastRemovedIndex, lastRemoved);
                       _saveData();
                       });
@@ -122,7 +125,7 @@ class _HomeState extends State<Home> {
                 ),
             duration: Duration(seconds: 2),
             );
-
+            Scaffold.of(context).removeCurrentSnackBar();    // ADICIONE ESTE COMANDO
             Scaffold.of(context).showSnackBar(sn);
             },
             key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
@@ -151,6 +154,29 @@ class _HomeState extends State<Home> {
                 );
 }
 
+
+Future<Null> ordenar() async{
+
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      
+    this._todoList.sort((a,b){
+
+        if(a["ok"] && !b["ok"])
+          return 1;
+        if(!a["ok"] && b["ok"])
+          return -1;
+        return 0;
+    });
+    _saveData();
+    return null;
+
+    });
+
+}
+
+
   //processo de abertura de arquivo
   Future<File> _getFile() async {
     final directory = await path.getApplicationDocumentsDirectory();
@@ -175,3 +201,4 @@ class _HomeState extends State<Home> {
     }
   }
 }
+
